@@ -60,7 +60,7 @@
 
         <div class="panel left-panel">
             <div class="content">
-              <h1>🧩 Welcome to Puzzle Game 🧩</h1><br><br>
+              <h1>🧩 Welcome to Puzzle Game 🧩 </h1><br>
                 <h3>New here?</h3>
                 <br>
                 <button class="btn transparent" id="sign-up-btn">Sign Up</button>
@@ -70,7 +70,7 @@
 
         <div class="panel right-panel">
             <div class="content">
-              <h1>🧩 Welcome to Puzzle Game 🧩</h1><br><br>
+              <h1>🧩 Welcome to Puzzle Game 🧩 </h1><br>
                 <h3>One of us?</h3>
                 <br>
                 <button class="btn transparent" id="sign-in-btn">Sign In</button>
