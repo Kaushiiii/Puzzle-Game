@@ -2,7 +2,7 @@
 session_start();
 require 'db.php';
 
-$username = $_POST['username'];//receive user name ans pass
+$username = $_POST['username'];
 $password = $_POST['password'];
 
 $sql = "SELECT * FROM users WHERE username=?";
@@ -12,11 +12,11 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($user = $result->fetch_assoc()) {
-    if (password_verify($password, $user['password'])) {//check hashed pass in DB
+    if (password_verify($password, $user['password'])) {//cheched hashed pass
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['last_activity'] = time();
-        header("Location: game.php");
+        header("Location: game.php");//redirect to game
         //echo json_encode(["status" => "success"]);
     } else {
         echo json_encode(["status" => "error", "message" => "Invalid password"]);

@@ -9,15 +9,15 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];//get progress by id
 
 $sql = "SELECT high_score, turns, time_taken, hints_used 
         FROM game_progress 
         WHERE user_id = ? 
-        AND id = (SELECT MAX(id) from game_progress) ";//select the values need to display
+        AND id = (SELECT MAX(id) from game_progress) ";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);//prevent sql injection -user inputs are treated as data
+$stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $data = $result->fetch_assoc();
@@ -34,7 +34,7 @@ if ($data) {
     ]);
 } else {
     echo json_encode([
-        "status" => "success ,no progress",
+        "status" => "success",
         "data" => null
     ]);
 }
