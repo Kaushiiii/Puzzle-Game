@@ -1,18 +1,19 @@
 var rows = 4;
 var columns = 4;
 
+//img titles 
 var currTile;
 var otherTile;
 
-var turns = 0;//count of swaps the player has made
+var turns = 0;
 
 let timerValue = 0;
-let timerInterval = null;//id for set interval 
+let timerInterval = null;
 
-let hintsUsed = 0;//how many banana-hints the player used
+let hintsUsed = 0;
 
 
-//set timer stars at 1 
+//timer start from 1
 function startTimer() {
     timerInterval = setInterval(() => {
         timerValue++;
@@ -20,7 +21,7 @@ function startTimer() {
     }, 1000);
 }
 
-//retrieve the most recent saved game progress for the logged in user
+//send http to load_progress to retrieve 
 function loadProgress() {
       fetch('load_progress.php', {
         method: 'GET',
@@ -35,13 +36,10 @@ function loadProgress() {
         });
 }
 
-//call timer and progress
 window.onload = function () {
-    startTimer();
+    startTimer();//call
     loadProgress();
     document.getElementById("hints").innerText = hintsUsed;
-
-
     //initialize the 4x4 board
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
@@ -67,8 +65,6 @@ window.onload = function () {
     for (let i = 1; i <= rows * columns; i++) {
         pieces.push(i.toString()); //put "1" to "16" into the array (puzzle images names)
     }
-
-    //random order of shuffled puzzle pieces
     pieces.reverse();
     for (let i = 0; i < pieces.length; i++) {
         let j = Math.floor(Math.random() * pieces.length);
@@ -79,8 +75,6 @@ window.onload = function () {
         pieces[j] = tmp;
     }
 
-
-    //Create <img> elements for each shuffled piece and add them to pieces
     for (let i = 0; i < pieces.length; i++) {
         let tile = document.createElement("img");
         tile.src = "./static/images/" + pieces[i] + ".jpg";
@@ -118,8 +112,7 @@ function dragDrop() {
     otherTile = this; //this refers to image that is being dropped on
 }
 
-//prevent swapping a blank
-function dragEnd() {
+function dragEnd() {//prevent swapping a blank
     if (currTile.src.includes("blank")) {
         return;
     }
@@ -137,7 +130,7 @@ function dragEnd() {
     checkPuzzleSolved();
 }
 
-//update DB
+//send post to save_progress
 function saveGameData(turns, time, hints, score) {
     fetch('save_progress.php', {
         method: 'POST',
@@ -148,7 +141,8 @@ function saveGameData(turns, time, hints, score) {
         .then(data => console.log('Progress saved:', data));
 }
 
-//compares to the expected position
+
+
 function checkPuzzleSolved() {
     const boardTiles = document.getElementById("board").getElementsByTagName("img");
     let isSolved = true;
@@ -164,19 +158,19 @@ function checkPuzzleSolved() {
     if (isSolved) {
         clearInterval(timerInterval);
         alert(`You solved the puzzle in ${turns} turns.`);
-        saveGameData(turns, timerValue, hintsUsed, 1160 - turns * 10);//calculate score
+        saveGameData(turns, timerValue, hintsUsed, 1000 - turns * 10);//calculate high score
         location.reload();
     }
 }
 
 
-//fetch banana cal
+//server proxying external API
 document.getElementById("hint-btn").addEventListener("click", async () => {
     const response = await fetch("banana_proxy.php");
     const data = await response.json();
 
     const imgUrl = data.question;
-    const solution = data.solution;
+    const solution = data.solution;//expected numeric answer
 
     document.getElementById("banana-game").innerHTML = `
         <h3>Banana Game</h3>
@@ -200,12 +194,13 @@ document.getElementById("hint-btn").addEventListener("click", async () => {
     
 });
 
+//hint reveal and hide
 function doHide() {
     document.getElementById("myImage").style.display = "none";
 }
 
-//reveal hint for 3s and hide
 function revealHint() {
     document.getElementById("myImage").style.display = "block";
     setTimeout("doHide()", 3000);
 }
+

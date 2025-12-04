@@ -2,6 +2,6 @@
 session_start();
 session_unset();
 session_destroy();
-header("Location: ./auth.php");
-exit;//clear session and redirect to auth
+header("Location: ./auth.php");//clear session redirect to auth page
+exit;
 ?>

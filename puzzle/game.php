@@ -2,14 +2,12 @@
 session_start();
 $timeout = 300; 
 
-//if user_id not set redirect to login page
 if (!isset($_SESSION['user_id'])) {
     header("Location: auth.php?login_required=1");
     exit();
 }
 
 
-//if last activity > 5min clear session
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
     session_unset();
     session_destroy();
@@ -29,11 +27,11 @@ $_SESSION['last_activity'] = time();
     </head>
 
     <body>
-        <h1>Puzzle Game 🧩</h1> <br>
+        <h1>Puzzle Game 🧩</h1> 
         <img id="myImage" src="./static/images/jinu.jpg" style="display: none;" alt="Image">
         <div id="board"></div>
-        <h2> Previous game progress :- 🔂Turns: <span id="pre-turns">0</span> | ⏳Timer: <span id="pre-timer">  </span> | 💡Hint used: <span id="pre-hints"></span> | 🏆Score: <span id="pre-score"></span> </h2>
-        <h2>🔂Turns: <span id="turns">0</span> | ⏳Timer: <span id="timer">  </span> | 💡Hint used: <span id="hints"></span> </h2>
+        <h3> Previous game progress :- 🔂Turns: <span id="pre-turns">0</span> | ⏳Timer: <span id="pre-timer">  </span> | 💡Hint used: <span id="pre-hints"></span> | 🏆Score: <span id="pre-score"></span> </h3>
+        <h3>🔂Turns: <span id="turns">0</span> | ⏳Timer: <span id="timer">  </span> | 💡Hint used: <span id="hints"></span> </h3>
         <div id="pieces"></div>
         <button id="hint-btn">Get Hint 🍌</button>
         <div id="banana-game"></div>
