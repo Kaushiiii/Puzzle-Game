@@ -1,48 +1,223 @@
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', sans-serif; 
     text-align: center;
     background-image: url("../images/bg.png");
-    background-size: 100% 100%;
-    
-    
+    background-size: cover; 
+    background-position: center;
+    background-attachment: fixed;
+    margin: 0;
+    padding-bottom: 50px;
 }
 
-h1{
+h1 {
     font-size: 50px;
     font-family: Georgia, 'Times New Roman', Times, serif;
     color: navy;
+    margin-top: 20px;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7);
+}
+
+/* Stats Header */
+h2 {
+    background-color: rgba(255, 255, 255, 0.8);
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    margin: 10px 0;
 }
 
 #board {
     width: 387px;
     height: 364px;
     border: 3px solid purple;
-
-    margin: 0 auto;
+    margin: 20px auto; 
     display: flex;
     flex-wrap: wrap;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
 #board img {
     width: 95px;
     height: 89px;
     border: 0.5px solid lightblue;
+    display: block; /* Removes tiny gaps */
 }
-
 
 #pieces {
     width: 810px;
     height: 183px;
     border: 3px solid purple;
-
-    margin: 0 auto;
+    margin: 20px auto;
     display: flex;
     flex-wrap: wrap;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
 #pieces img {
     width: 90px;
     height: 90px;
     border: 0.5px solid lightblue;
+}
+
+
+.btn, button#submit-answer {
+    width: 150px;
+    background-color: #5995fd;
+    border: none;
+    outline: none;
+    height: 49px;
+    border-radius: 49px;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 20px 0;
+    cursor: pointer;
+    transition: 0.5s;
+    font-size: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.btn:hover, button#submit-answer:hover {
+    background-color: #4d84e2;
+    transform: translateY(-2px);
+}
+
+/* Input field style for the modal */
+input#banana-answer {
+    background-color: #f0f0f0;
+    border: 2px solid #ddd;
+    border-radius: 55px;
+    height: 45px;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+    outline: none;
+    margin-right: 10px;
+    width: 200px;
+    text-align: center;
+}
+
+input#banana-answer:focus {
+    border-color: #5995fd;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+    backdrop-filter: blur(5px); /* Nice blur effect on background */
+    animation: fadeIn 0.3s;
+}
+
+/* Modal Content Box */
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto; /* 5% from top and centered */
+    padding: 30px;
+    border: none;
+    border-radius: 20px;
+    width: 90%; 
+    max-width: 700px; /* Max width for desktop */
+    text-align: center;
+    position: relative;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    animation: slideDown 0.4s;
+}
+
+#myImage {
+    /* Ensure it behaves like a normal image, NOT a modal */
+    position: relative !important; 
+    width: 300px !important; /* Force a standard size */
+    height: auto !important;
+    margin: 20px auto !important; /* Center it */
+    z-index: 1 !important; /* Ensure it stays behind any modals if they open */
+    border: 5px solid #FFD700; /* Gold border to make it look like a reward */
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+/* Helper class to stop body scroll */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Modal Headers */
+.modal-content h3 {
+    font-size: 2rem;
+    color: #444;
+    margin-bottom: 10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.modal-content p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* The Banana Image inside Modal */
+#banana-game img {
+    max-width: 100%; 
+    height: auto;
+    max-height: 60vh; /* Ensure it fits on screen vertically */
+    border-radius: 10px;
+    margin: 15px 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* The Close Button (X) */
+.close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 30px;
+    font-weight: bold;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    transition: 0.3s;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    transform: rotate(90deg);
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 870px) {
+    #board, #pieces {
+        max-width: 95%; /* Fit on smaller screens */
+        height: auto;
+        justify-content: center;
+    }
+    
+    #pieces {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 35px;
+    }
 }
 
