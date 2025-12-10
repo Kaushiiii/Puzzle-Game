@@ -1,8 +1,7 @@
 <?php
 
-//connect to mysqli
 $servername = 'localhost';
-$dbname = 'puzzle game';
+$dbname = 'puzzlegame';
 $username = 'root';
 $password = '';
 

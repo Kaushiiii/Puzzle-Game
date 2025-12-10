@@ -4,15 +4,14 @@ var columns = 4;
 var currTile;
 var otherTile;
 
-var turns = 0;//count of swaps the player has made
+var turns = 0;
 
 let timerValue = 0;
-let timerInterval = null;//id for set interval 
+let timerInterval = null;
 
-let hintsUsed = 0;//how many banana-hints the player used
+let hintsUsed = 0;
 
 
-//set timer stars at 1 
 function startTimer() {
     timerInterval = setInterval(() => {
         timerValue++;
@@ -20,7 +19,6 @@ function startTimer() {
     }, 1000);
 }
 
-//retrieve the most recent saved game progress for the logged in user
 function loadProgress() {
       fetch('load_progress.php', {
         method: 'GET',
@@ -35,20 +33,17 @@ function loadProgress() {
         });
 }
 
-//call timer and progress
 window.onload = function () {
     startTimer();
     loadProgress();
     document.getElementById("hints").innerText = hintsUsed;
-
-
     //initialize the 4x4 board
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
 
             //<img>
             let tile = document.createElement("img");
-            tile.src = "./static/images/blank.jpg";
+            tile.src = "static/images/blank.jpg";
 
             //DRAG FUNCTIONALITY
             tile.addEventListener("dragstart", dragStart); //click on image to drag
@@ -67,8 +62,6 @@ window.onload = function () {
     for (let i = 1; i <= rows * columns; i++) {
         pieces.push(i.toString()); //put "1" to "16" into the array (puzzle images names)
     }
-
-    //random order of shuffled puzzle pieces
     pieces.reverse();
     for (let i = 0; i < pieces.length; i++) {
         let j = Math.floor(Math.random() * pieces.length);
@@ -79,11 +72,9 @@ window.onload = function () {
         pieces[j] = tmp;
     }
 
-
-    //Create <img> elements for each shuffled piece and add them to pieces
     for (let i = 0; i < pieces.length; i++) {
         let tile = document.createElement("img");
-        tile.src = "./static/images/" + pieces[i] + ".jpg";
+        tile.src = "static/images/" + pieces[i] + ".jpg";
 
         //DRAG FUNCTIONALITY
         tile.addEventListener("dragstart", dragStart); //click on image to drag
@@ -115,10 +106,9 @@ function dragLeave() {
 }
 
 function dragDrop() {
-    otherTile = this; //this refers to image that is being dropped on
+    otherTile = this; 
 }
 
-//prevent swapping a blank
 function dragEnd() {
     if (currTile.src.includes("blank")) {
         return;
@@ -137,7 +127,6 @@ function dragEnd() {
     checkPuzzleSolved();
 }
 
-//update DB
 function saveGameData(turns, time, hints, score) {
     fetch('save_progress.php', {
         method: 'POST',
@@ -148,7 +137,6 @@ function saveGameData(turns, time, hints, score) {
         .then(data => console.log('Progress saved:', data));
 }
 
-//compares to the expected position
 function checkPuzzleSolved() {
     const boardTiles = document.getElementById("board").getElementsByTagName("img");
     let isSolved = true;
@@ -164,48 +152,109 @@ function checkPuzzleSolved() {
     if (isSolved) {
         clearInterval(timerInterval);
         alert(`You solved the puzzle in ${turns} turns.`);
-        saveGameData(turns, timerValue, hintsUsed, 1160 - turns * 10);//calculate score
+        saveGameData(turns, timerValue, hintsUsed, 1000 - turns * 10);
         location.reload();
     }
 }
 
+// Get modal elements
+const modal = document.getElementById("banana-modal");
+const span = document.getElementsByClassName("close-modal")[0];
 
-//fetch banana cal
+// Helper to open modal and freeze background
+function openModal() {
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden"; // DISABLE SCROLL
+}
+
+// Helper to close modal and unfreeze background
+function closeModal() {
+    modal.style.display = "none";
+    document.body.style.overflow = "auto"; // ENABLE SCROLL
+}
+
+// Close on X click
+span.onclick = function() {
+    closeModal();
+}
+
+// Close on background click
+window.onclick = function(event) {
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+
+const hintModal = document.getElementById("hint-modal");
+const hintClose = document.getElementsByClassName("close-hint")[0];
+const hintImage = document.getElementById("hint-image");
+
+function openHintModal() {
+    hintModal.style.display = "block";
+    document.body.style.overflow = "hidden";
+}
+
+function closeHintModal() {
+    hintModal.style.display = "none";
+    document.body.style.overflow = "auto";
+}
+
+hintClose.onclick = closeHintModal;
+
+window.addEventListener("click", function(event) {
+    if (event.target === hintModal) {
+        closeHintModal();
+    }
+});
+
 document.getElementById("hint-btn").addEventListener("click", async () => {
-    const response = await fetch("banana_proxy.php");
-    const data = await response.json();
-
-    const imgUrl = data.question;
-    const solution = data.solution;
-
-    document.getElementById("banana-game").innerHTML = `
-        <h3>Banana Game</h3>
-        <img src="${imgUrl}" alt="Banana Game" style="width:200px;"><br>
-        <input type="number" id="banana-answer" placeholder="Enter your answer">
-        <button id="submit-answer">Submit</button>
-    `;
-
-    document.getElementById("submit-answer").addEventListener("click", () => {
-        const userAnswer = document.getElementById("banana-answer").value;
-        if (parseInt(userAnswer) === solution) {
-                hintsUsed += 1
-                document.getElementById("hints").innerText = hintsUsed;
-            alert("Correct! You earned a hint.");
-            revealHint();
-        } else {
-            alert("Wrong answer, try again!");
-        }
-    });
-
+    openModal();
     
+    document.getElementById("banana-game").innerHTML = "<h3>Loading game...</h3>";
+    
+    try {
+        const response = await fetch("./banana_proxy.php");
+        const data = await response.json();
+
+        const imgUrl = data.question;
+        const solution = data.solution;
+
+        document.getElementById("banana-game").innerHTML = `
+            <h3>Banana Game</h3>
+            <p>Solve this to get a hint!</p>
+            <img src="${imgUrl}" alt="Banana Game"><br>
+            <input type="number" id="banana-answer" placeholder="Enter answer">
+            <button id="submit-answer">Submit</button>
+        `;
+
+        document.getElementById("submit-answer").addEventListener("click", () => {
+            const userAnswer = document.getElementById("banana-answer").value;
+            
+            if (parseInt(userAnswer) === solution) {
+                hintsUsed += 1;
+                document.getElementById("hints").innerText = hintsUsed;
+                alert("Correct! You earned a hint.");
+                
+                closeModal(); // Close modal first
+                revealHint(); // Then show hint on main page
+            } else {
+                alert("Wrong answer, try again!");
+            }
+        });
+    } catch (error) {
+        console.error("Error loading banana game:", error);
+        document.getElementById("banana-game").innerHTML = "<h3>Error loading game.</h3>";
+    }
 });
 
 function doHide() {
     document.getElementById("myImage").style.display = "none";
 }
 
-//reveal hint for 3s and hide
 function revealHint() {
-    document.getElementById("myImage").style.display = "block";
-    setTimeout("doHide()", 3000);
+    openHintModal();
+
+    setTimeout(() => {
+        closeHintModal();
+    }, 3000);
 }
